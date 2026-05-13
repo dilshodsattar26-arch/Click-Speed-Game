@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tezlik O'yini</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            color: white;
+            user-select: none;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            width: 300px;
+        }
+        h1 { margin-top: 0; font-size: 24px; }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #click-btn {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: none;
+            background: #ff6b6b;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            outline: none;
+        }
+        #click-btn:active { transform: scale(0.95); }
+        #click-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .hidden { display: none; }
+        #restart-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #4ecdc4;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⚡ Tezlik O'yini</h1>
+    <p>10 soniyada qancha bosa olasan?</p>
+    
+    <div class="stats">
+        <span id="time-display">Vaqt: 10s</span>
+        <span id="score-display">Ball: 0</span>
+    </div>
+
+    <button id="click-btn" onclick="clickAction()">BOS!</button>
+    
+    <div id="result-area" class="hidden">
+        <h2 id="final-msg">O'yin tugadi!</h2>
+        <button id="restart-btn" onclick="resetGame()">Qayta boshlash</button>
+    </div>
+</div>
+
+<script>
+    let score = 0;
+    let timeLeft = 10;
+    let isPlaying = false;
+    let timerInterval;
+
+    const btn = document.getElementById('click-btn');
+    const scoreDisplay = document.getElementById('score-display');
+    const timeDisplay = document.getElementById('time-display');
+    const resultArea = document.getElementById('result-area');
+    const finalMsg = document.getElementById('final-msg');
+
+    function clickAction() {
+        if (timeLeft === 0) return;
+
+        if (!isPlaying) {
+            startGame();
+        }
+
+        score++;
+        scoreDisplay.innerText = `Ball: ${score}`;
+        
+        // Tugma rangini tasodifiy o'zgartirish (effekt uchun)
+        const colors = ['#ff6b6b', '#feca57', '#ff9ff3', '#54a0ff'];
+        btn.style.background = colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function startGame() {
+        isPlaying = true;
+        score = 0;
+        timeLeft = 10;
+        resultArea.classList.add('hidden');
+        btn.disabled = false;
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timeDisplay.innerText = `Vaqt: ${timeLeft}s`;
+            
+            if (timeLeft <= 0) {
+                endGame();
+            }
+        }, 1000);
+    }
+
+    function endGame() {
+        clearInterval(timerInterval);
+        isPlaying = false;
+        btn.disabled = true;
+        btn.style.background = '#ccc';
+        resultArea.classList.remove('hidden');
+        
+        // Natijaga qarab xabar
+        if(score > 50) finalMsg.innerText = `🔥 Ajoyib! ${score} ta!`;
+        else if(score > 30) finalMsg.innerText = `👍 Yomon emas! ${score} ta.`;
+        else finalMsg.innerText = `😐 Sekin! ${score} ta.`;
+    }
+
+    function resetGame() {
+        score = 0;
+        timeLeft = 10;
+        isPlaying = false;
+        scoreDisplay.innerText = "Ball: 0";
+        timeDisplay.innerText = "Vaqt: 10s";
+        btn.style.background = '#ff6b6b';
+        btn.disabled = false;
+        resultArea.classList.add('hidden');
+    }
+</script>
+
+</body>
+</html>
